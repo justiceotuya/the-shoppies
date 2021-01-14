@@ -1,27 +1,12 @@
 import React from 'react';
 import './App.css';
-import { Button, Search } from './components';
+import { Home } from './pages';
+import { debounce } from './utils';
 
 function App() {
 
-    const handleSubmit = (e:any) => {
-        e.preventDefault()
-        console.log(e.target[0].value)
-    }
-
   return (
-    <>
-      <Button
-      Btntype="secondary"
-      onClick={() => alert('clicked')}
-      // disabled
-      >
-        Nominate
-</Button>
-<Search
-onSubmit={handleSubmit}
-/>
-</>
+    <Home    />
   );
 }
 
