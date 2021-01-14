@@ -1,12 +1,17 @@
 import { React } from 'react';
-import { render, fireEvent } from '@testing-library/react'
-import { Button } from '..';
+import { render, screen,fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { Button, Search } from '..';
 
-test('button should have text value', () => {
-    const { container } = render(
-    <Button
-    children="My Mother"
-    />);
-    const button = container.firstChild
-    expect(button?.textContent).toBe('My Mother')
+test('input should submit when pressing enter', () => {
+    const handleSubmit = jest.fn()
+    render(<Search onSubmit={handleSubmit}/>)
+    const inputNode = screen.getByPlaceholderText("Search Movies")
+    const text = "typing"
+    userEvent.type(inputNode, text)
+    fireEvent.submit(inputNode)
+
+    expect(inputNode.value).toEqual(text)
+    expect(handleSubmit).toHaveBeenCalledTimes(1)
 });
+

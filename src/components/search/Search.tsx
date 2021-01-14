@@ -1,23 +1,32 @@
 import React from 'react'
 import { SearchIcon, StyledForm } from './Search.style'
 
-export interface ISearchProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    children: string,
-    Btntype:string,
-    disabled?: boolean;
-    onClick: () => void,
+export interface ISearchProps {
+    onSubmit: (event:React.FormEvent<HTMLInputElement>, data: string|undefined) => void
+
 }
 export const Search:React.FC<ISearchProps & React.HTMLProps<HTMLInputElement>> = ({
-    children, Btntype, onClick, disabled=false, ...props
+    onSubmit, ...props
 }) => {
+
+    const inputRef = React.useRef<HTMLInputElement>(null)
+//     const handleSubmit = (e:any, data:string| undefined) => {
+//         e.preventDefault()
+// console.log({data})
+//     }
+
     return (
         <StyledForm
-        Btntype={Btntype}
-        onClick={onClick}
-        disabled={disabled}
+      onSubmit={(e:any) => onSubmit(e, inputRef?.current?.value)}
+        // onSubmit={()=>onSubmit}
         >
-            {children}
-            {/* <SearchIcon/> */}
+            <SearchIcon/>
+            <input
+            type="text"
+            ref={inputRef}
+            className="searchInput"
+            placeholder="Search Movies"
+            />
             </StyledForm>
 
     )

@@ -3,6 +3,12 @@ import './App.css';
 import { Button, Search } from './components';
 
 function App() {
+
+    const handleSubmit = (e:any) => {
+        e.preventDefault()
+        console.log(e.target[0].value)
+    }
+
   return (
     <>
       <Button
@@ -12,7 +18,9 @@ function App() {
       >
         Nominate
 </Button>
-{/* <Search/> */}
+<Search
+onSubmit={handleSubmit}
+/>
 </>
   );
 }

@@ -2,32 +2,33 @@ import styled from 'styled-components';
 import {ISearchProps} from './Search'
 import {ReactComponent as Search} from '../../assets/icons/search.svg'
 export const StyledForm = styled.form<ISearchProps>`
-border: none;
-cursor: pointer;
-background: ${props => props.Btntype === 'secondary' ? '#000000' : '#F7B500'};
+/* border: none;
+cursor: pointer; */
+background: #EEEEEE;
 border-radius: 5px;
 color: #fff;
-transform:translateY(0);
-transition: transform .2s ease-out;
-font-size: 10px;
-padding: 8px 17px;
-line-height: 6px;
+position: relative;
+height: 29px;
+padding: 20px 10px 20px 52px;
 
- :hover {
-    opacity: .8
-}
-:active {
-    transform:translateY(3px);
-    transition: transform .2s ease-out;
-}
-
-:disabled {
-    background: #B9B8BC;
-    cursor: not-allowed;
-    opacity:1;
+.searchInput {
+    top:0;
+    right:0;
+    left:0;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border: none;
+background: #EEEEEE;
+border: none;
+    padding-left: 52px;
 }
 `;
 
 export const SearchIcon = styled(Search)`
-fill: green
+position: absolute;
+    z-index: 3;
+    left: 20px;
+    transform: translateY(-6px);
+
 `
