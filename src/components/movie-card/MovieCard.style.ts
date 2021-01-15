@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-// import {ISearchProps} from './Search'
-import {ReactComponent as Search} from '../../assets/icons/search.svg'
 export const StyledMovieCard = styled.div`
 
 box-shadow: 0 5px 10px rgba(154,160,185,.05), 0 15px 40px rgba(166,173,201,.2);

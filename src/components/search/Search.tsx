@@ -1,5 +1,4 @@
 import React from 'react'
-import { debounce } from '../../utils'
 import { SearchIcon, StyledForm } from './Search.style'
 
 export interface ISearchProps {
