@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect, useState} from 'react'
 import { Button, MovieCard, Search } from '../../components'
 import Layout from '../../components/layout'
 import { debounce } from '../../utils'
@@ -17,10 +17,17 @@ interface IMoviesProps {
 
 export const Home = () => {
 
-    const [searchText, setSearchText] = React.useState<string |undefined>('')
-    const [movies, setMovies] = React.useState<null | Array<IMoviesObjs>>([]);
-const [loading, setLoading] = React.useState<boolean>(false)
-const [error, setError] = React.useState<null | string>(null)
+    const [searchText, setSearchText] = useState<string |undefined>('')
+    const [movies, setMovies] = React.useState<Array<IMoviesObjs>>([])
+const [loading, setLoading] = useState<boolean>(false)
+const [error, setError] = useState<null | string>(null)
+const [isFetching, setIsFetching] = useState<boolean>(false);
+const [pagination, setPagination] = useState({
+    currentPage: 1,
+                totalResultsCount: 0,
+                totalPage: 0
+})
+
 
 
     const handleSubmit = (e:any) => {
@@ -32,37 +39,97 @@ const [error, setError] = React.useState<null | string>(null)
 
     const getData = (data:string|undefined) => {
 setSearchText(data)
+setMovies([])
+setPagination({
+    ...pagination,
+    currentPage: 1,
+                totalResultsCount: 0,
+                totalPage: 0
+})
 }
 
-React.useEffect(() => {
-    const handleFetchData = async () => {
-        setMovies([])
-        setLoading(true)
-        setError(null)
-        try {
-          const request =  await fetch(`https://www.omdbapi.com/?s=${searchText}&type=movie&page=1&apikey=da4d5e4e`)
-          const response = await request.json()
-          if(response.Response === 'True'){
-              setMovies(response.Search)
-              setError(null)
-            }else {
-                setMovies(null)
-              setError(response.Error)
-          }
-          setLoading(false)
-        } catch (error) {
-            setMovies([])
-            setLoading(false)
-          setError(error.message)
-    console.log(error.message)
-        }
-        }
-        searchText !== "" && handleFetchData()
+useEffect(() => {
+    // currentPage: 1,
+    // totalResultsCount: 0,
+    // totalPage: 0
+const {currentPage,totalResultsCount,totalPage} = pagination
+//current page -1 is equal to totalpage and totalpage is not zero STOP
+if((currentPage - 1 === totalPage )&& totalPage !== 0 || searchText === ""){
+    return
+}else {
+
+    handleFetchData()
+}
     //   debounce(handleFetchData, 3000)()
-}, [searchText])
+}, [searchText, !!isFetching])
+
+useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+const handleScroll = () => {
+    if (window.innerHeight + document.documentElement.scrollTop  !== document.documentElement.offsetHeight ) return;
+    console.log('scrolled')
+    setIsFetching(true)
+//    if(pagination.currentPage !== pagination.totalPage) handleFetchData()
+}
 
 
-console.log({movies})
+
+const handleGetTotalPage = (value:number) => {
+        if(value % 10 === 0){
+            return value / 10
+        }else {
+          return Math.floor(value / 10) + 1
+        }
+}
+
+const handleFetchData = async (more?:boolean) => {
+//    more === false && () => (
+//     setMovies([])
+//     setLoading(true)
+//     setError(null)
+//    )
+    try {
+      const request =  await fetch(`https://www.omdbapi.com/?s=${searchText}&type=movie&page=${pagination.currentPage}&apikey=da4d5e4e`)
+      const response = await request.json()
+      if(response.Response === 'True'){
+          setMovies([...movies, ...response.Search])
+          console.log()
+          setPagination({
+              ...pagination,
+              currentPage: pagination.currentPage + 1,
+              totalResultsCount: response.totalResults,
+              totalPage: handleGetTotalPage(response.totalResults)
+          })
+          setError(null)
+        }else {
+            setMovies([])
+            setPagination({
+                ...pagination,
+                currentPage: 1,
+                totalResultsCount: 0,
+                totalPage: 0
+            })
+          setError(response.Error)
+      }
+      setLoading(false)
+    setIsFetching(false)
+    } catch (error) {
+        setMovies([])
+        setPagination({
+            ...pagination,
+            currentPage: 1,
+            totalResultsCount: 0,
+            totalPage: 0
+        })
+        setLoading(false)
+    setIsFetching(false)
+      setError(error.message)
+console.log(error.message)
+    }
+    }
 
     return (
         <Layout>
@@ -70,7 +137,7 @@ console.log({movies})
 
 <Search
 onSubmit={handleSubmit}
-getData={getData}
+getData={debounce(getData,1000)}
 />
 
 {/* <h1>Search result for '{searchText}'</h1> */}
@@ -103,6 +170,7 @@ getData={getData}
       } = item
   return (
 <MovieCard
+key={imdbID}
 movieRating="8.0"
 movieTitle={Title}
 movieYear={Year}
@@ -113,6 +181,9 @@ movieImage={Poster}
 }
   </div>
         </StyledHome>
+{
+    isFetching && (pagination.currentPage - 1 !== pagination.totalPage) && <p style={{textAlign: 'center'}}> Fetching more Movies ...</p>
+}
         </Layout>
     )
 }

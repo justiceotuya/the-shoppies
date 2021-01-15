@@ -19,7 +19,7 @@ export const MovieCard: React.FC<IMovieCardProps> = ({
 }:IMovieCardProps ) => {
 
 const handleMovieTitle = (title: string) => {
-   return title.length > 22 ? `${title.substr(0,22)}...` : title
+   return title?.length > 22 ? `${title.substr(0,22)}...` : title
 }
 
     return (

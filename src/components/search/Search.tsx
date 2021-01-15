@@ -3,7 +3,7 @@ import { debounce } from '../../utils'
 import { SearchIcon, StyledForm } from './Search.style'
 
 export interface ISearchProps {
-    onSubmit: (event:React.FormEvent<HTMLInputElement>, data: string|undefined) => void
+    // onSubmit: (event:React.FormEvent<HTMLInputElement>, data: string|undefined) => void
     getData:(data:string|undefined)=>void
 
 }
@@ -11,9 +11,10 @@ export const Search:React.FC<ISearchProps & React.HTMLProps<HTMLInputElement>> =
     onSubmit,getData, ...props
 }) => {
 
-    const inputRef = React.useRef<HTMLInputElement>(null)
-    const handleChange = () => {
-        return getData(inputRef?.current?.value)
+    const [inputValue, setInputValue] = React.useState('')
+    const handleChange = (e:any) => {
+        getData(e.target.value)
+        setInputValue(e.target.value)
     }
 //     const handleSubmit = (e:any, data:string| undefined) => {
 //         e.preventDefault()
@@ -22,20 +23,20 @@ export const Search:React.FC<ISearchProps & React.HTMLProps<HTMLInputElement>> =
 
     return (
         <StyledForm
-      onSubmit={(e:any) => onSubmit(e, inputRef?.current?.value)}
+    //   onSubmit={(e:any) => onSubmit(e, inputRef?.current?.value)}
         // onSubmit={()=>onSubmit}
         getData={getData}
         >
             <SearchIcon/>
             <input
             type="text"
-            ref={inputRef}
-            onChange={debounce(handleChange, 1000)}
+            value={inputValue}
+            onChange={handleChange}
             className="searchInput"
             placeholder="Search Movies"
             />
 
- <h1 className="searchResult">{inputRef && inputRef?.current?.value   && `Search result for ${inputRef?.current?.value}`}</h1>
+ <h1 className="searchResult">{inputValue    && `Search result for ${inputValue}`}</h1>
             </StyledForm>
 
     )
