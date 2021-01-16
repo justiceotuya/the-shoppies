@@ -9,7 +9,7 @@ import {
     MovieContainerComponent,
     ScrollToTopComponent
 } from './components'
-import { StyledHome } from './Home.style'
+import { BackIcon, StyledHome, StyledNominationContainer } from './Home.style'
 import { IMoviesObjs } from './interfaces'
 
 
@@ -48,10 +48,12 @@ export const Home = () => {
         }
     }, [searchText])
 
+
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
 
     const handleScroll = () => {
         handleShowScrollButton()
@@ -170,6 +172,13 @@ export const Home = () => {
             {
                 isFetching && (pagination.currentPage - 1 !== pagination.totalPage) && <p style={{ textAlign: 'center' }}> Fetching more Movies ...</p>
             }
+
+            <StyledNominationContainer>
+                <header className="header">
+<BackIcon/>
+                <p>Nomination List</p>
+                </header>
+            </StyledNominationContainer>
         </Layout>
     )
 }

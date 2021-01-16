@@ -1,10 +1,7 @@
 import styled from 'styled-components';
+import {ReactComponent as Back} from '../../assets/icons/back.svg'
 
 export const StyledHome = styled.section`
-@media screen and (max-width: 699px){
-    padding-left: 1em;
-    padding-right: 1em;
-}
 
 .movies_container {
     display: grid;
@@ -26,7 +23,7 @@ export const StyledHome = styled.section`
     bottom: 30px;
     background: black;
     border-radius: 50%;
-    border:none;
+    border:2px solid #F7B500;
     width: 50px;
     height: 50px;
     display: grid;
@@ -55,4 +52,38 @@ transition: transform .2s ease-in-out;
     text-transform: uppercase;
     font-weight: bold;
 }
+
+@media screen and (max-width: 699px){
+    padding-left: 1em;
+    padding-right: 1em;
+.scrollToTop {
+right: 20px;
+}
+}
+`
+
+export const StyledNominationContainer = styled.section`
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 2;
+    padding: 2em;
+    background: red;
+
+    .header {
+      position:relative;
+      display: grid;
+    place-content: center;
+    height: 50px
+    }
+`;
+
+export const BackIcon = styled(Back)`
+    position: absolute;
+    z-index: 3;
+    left: 0px;
+    top: 16px;
+    width: 20px;
+    height: 20px;
 `
