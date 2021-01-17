@@ -12,7 +12,7 @@ import {
     ScrollToTopComponent
 } from './components'
 import { StyledHome } from './Home.style'
-import { IMoviesObjs } from './interfaces'
+import { ToastContainer, toast } from 'react-toastify';
 
 
 export const Home = () => {
@@ -181,7 +181,9 @@ export const Home = () => {
                     setNominatedList([...nominatedList, item])
                     return data
                 } else {
-                    alert('you can only nominate 5 items')
+                    toast.error("You can only nominate 5 Movies", {
+                        position: toast.POSITION.TOP_CENTER
+                      });
                     return data
                 }
             }
