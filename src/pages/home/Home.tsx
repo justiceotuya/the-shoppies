@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import { Search } from '../../components'
 import Layout from '../../components/layout'
+import { useLocalStorageState } from '../../hooks'
 import { debounce } from '../../utils'
 import {
     EmptyContainerComponent,
     ErrorContainerComponent,
     LoadingContainerComponent,
     MovieContainerComponent,
+    NominationList,
     ScrollToTopComponent
 } from './components'
-import { BackIcon, StyledHome, StyledNominationContainer } from './Home.style'
+import { StyledHome } from './Home.style'
 import { IMoviesObjs } from './interfaces'
 
 
 export const Home = () => {
 
     const [searchText, setSearchText] = useState<string | undefined>('')
-    const [movies, setMovies] = React.useState<Array<[IMoviesObjs]>>([])
+    const [movies, setMovies] = React.useState<Array<any>>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<null | string>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -26,7 +28,8 @@ export const Home = () => {
         totalResultsCount: 0,
         totalPage: 0
     })
-
+    const [nominatedList, setNominatedList] = useLocalStorageState('nominatedList', [])
+    const [isNominatedPageOpen, setIsNominatedPageOpen] = useState<boolean>(false)
 
     const getData = (data: string | undefined) => {
         setSearchText(data)
@@ -109,10 +112,26 @@ export const Home = () => {
             const request = await fetch(`https://www.omdbapi.com/?s=${searchText}&type=movie&page=${pagination.currentPage}&apikey=da4d5e4e`)
             const response = await request.json()
             if (response.Response === 'True') {
+                //add nominated flag to the data
+                // handleAddNominatedFlag()
+                let resultWithNominatedFlag = response.Search.map((data: any) => {
+                    nominatedList.forEach((test: any) => {
+                        if (test.imdbID === data.imdbID) {
+                            data = { ...data, nominated: true }
+                            return data
+                        } else {
+                            data = { ...data, nominated: false }
+                            return data
+                        }
+                    })
+                    return data
+                }
+
+                )
                 //if we are fetching additiional data, append to current data
                 //else use new data
                 isFetchingAdditionalData ? setMovies([...movies,
-                ...response.Search]) : setMovies([...response.Search])
+                ...resultWithNominatedFlag]) : setMovies([...resultWithNominatedFlag])
                 setPagination({
                     ...pagination,
                     currentPage: pagination.currentPage + 1,
@@ -149,36 +168,91 @@ export const Home = () => {
         }
     }
 
+    //
+
+    const handleAddMovieToNominatedList = (item: any) => {
+        let newMovies = movies.map(data => {
+            if (item.imdbID === data?.imdbID) {
+                if (nominatedList === null) {
+                    data = { ...data, nominated: true }
+                    setNominatedList([item])
+                } else if (nominatedList.length < 5) {
+                    data = { ...data, nominated: true }
+                    setNominatedList([...nominatedList, item])
+                    return data
+                } else {
+                    alert('you can only nominate 5 items')
+                    return data
+                }
+            }
+            return data
+        })
+        setMovies([...newMovies])
+    }
+
+    const handleRemoveMovieFromNominatedList = (item: any) => {
+        //remove data from localstorage and nomination list
+        let newNominatedList = nominatedList.filter((movie: any) => movie.imdbID !== item.imdbID)
+        setNominatedList([...newNominatedList])
+
+        //change movie status on main page
+        let newMovies = movies.map(data => {
+            if (item.imdbID === data?.imdbID) {
+                data = { ...data, nominated: false }
+                return data
+            } else {
+                return data
+            }
+        })
+
+        setMovies([...newMovies])
+    }
+
+    const handleToggleNominatedPage = () => {
+        setIsNominatedPageOpen(!isNominatedPageOpen)
+    }
+
     return (
         <Layout>
             <StyledHome>
 
                 <Search
                     getData={debounce(getData, 1000)}
+                    nominatedListCount={nominatedList ? nominatedList.length : 0}
+                    handleClickNominatedIcon={handleToggleNominatedPage}
                 />
 
-                {/* <h1>Search result for '{searchText}'</h1> */}
 
-                <div className="movies_container">
+                <div>
                     {loading && <LoadingContainerComponent />}
                     {error && <ErrorContainerComponent error={error} />}
-                    {(!loading && !error && movies?.length === 0) && <EmptyContainerComponent />}
-                    {(movies.length > 0) && <MovieContainerComponent movies={movies} />}
+                    {(!loading && !error && movies?.length === 0) && <EmptyContainerComponent
+                        description="Search for movie to nominate your favourite"
+                    />}
+                    {(movies.length > 0) &&
+                        <div className="movies_container">
+                            <MovieContainerComponent
+                                movies={movies}
+                                handleClickCardButton={handleAddMovieToNominatedList}
+                            />
+                        </div>
+                    }
                 </div>
                 {
-                    showTop && <ScrollToTopComponent handleScrollToTop={handleScrollToTop} />}
+                    showTop && <ScrollToTopComponent handleScrollToTop={handleScrollToTop} />
+                    }
             </StyledHome>
 
             {
                 isFetching && (pagination.currentPage - 1 !== pagination.totalPage) && <p style={{ textAlign: 'center' }}> Fetching more Movies ...</p>
             }
 
-            <StyledNominationContainer>
-                <header className="header">
-<BackIcon/>
-                <p>Nomination List</p>
-                </header>
-            </StyledNominationContainer>
-        </Layout>
+<NominationList
+isNominatedPageOpen={isNominatedPageOpen}
+handleToggleNominatedPage={handleToggleNominatedPage}
+nominatedList={nominatedList}
+handleRemoveMovieFromNominatedList={handleRemoveMovieFromNominatedList}
+/>
+      </Layout>
     )
 }

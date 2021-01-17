@@ -1,11 +1,14 @@
 import React from 'react'
 import { FullPageComponent } from './FullPageComponent'
 
-export const EmptyContainerComponent: React.FC = () => {
+interface IEmptyProps {
+    description:string
+}
+export const EmptyContainerComponent: React.FC<IEmptyProps> = ({description}:IEmptyProps) => {
     return (
         <FullPageComponent>
             <h1> No Movies Available</h1>
-            <p>Search for movie to nominate your favourite</p>
+            <p>{description}</p>
         </FullPageComponent>
     )
 }

@@ -1,13 +1,14 @@
 import React from 'react'
-import { SearchIcon, StyledForm } from './Search.style'
+import { SearchIcon, StyledForm,NominatedIcon } from './Search.style'
 
 export interface ISearchProps {
     // onSubmit: (event:React.FormEvent<HTMLInputElement>, data: string|undefined) => void
-    getData:(data:string|undefined)=>void
-
+    getData:(data:string|undefined)=>void,
+    nominatedListCount: number;
+    handleClickNominatedIcon?:()=>void
 }
 export const Search:React.FC<ISearchProps & React.HTMLProps<HTMLInputElement>> = ({
-    onSubmit,getData, ...props
+    getData, nominatedListCount,handleClickNominatedIcon,...props
 }) => {
 
     const [inputValue, setInputValue] = React.useState('')
@@ -15,18 +16,21 @@ export const Search:React.FC<ISearchProps & React.HTMLProps<HTMLInputElement>> =
         getData(e.target.value)
         setInputValue(e.target.value)
     }
-//     const handleSubmit = (e:any, data:string| undefined) => {
-//         e.preventDefault()
-// console.log({data})
-//     }
+
+
 
     return (
         <StyledForm
-    //   onSubmit={(e:any) => onSubmit(e, inputRef?.current?.value)}
-        // onSubmit={()=>onSubmit}
+        nominatedListCount={nominatedListCount}
         getData={getData}
         >
+            <header className="headerContainer">
             <h1 className="header">The Shoppies</h1>
+            <button className="nominatedIconButton" type="button" onClick={handleClickNominatedIcon}>
+            <NominatedIcon/>
+            <span><p>{nominatedListCount}</p></span>
+            </button>
+            </header>
             <div className="input__container">
             <SearchIcon/>
             <label htmlFor="search">Search</label>

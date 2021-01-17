@@ -5,10 +5,11 @@ export const StyledHome = styled.section`
 
 .movies_container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     grid-auto-rows: 350px;
     grid-gap: 2em;
     margin: 2em;
+    /* align-items: center */
 }
 .fullPage {
     height: calc(100vh - 290px);
@@ -62,14 +63,36 @@ right: 20px;
 }
 `
 
-export const StyledNominationContainer = styled.section`
-    position: absolute;
-    top: 0;
+interface INominatedProps {
+    isNominatedPageOpen: boolean
+}
+export const StyledNominationContainer = styled(StyledHome)<INominatedProps>`
+    position: fixed;
+    top: ${props => props.isNominatedPageOpen === true ? '68px' : '100vh'};
+    position: fixed;
+    transition: top .2s ease-in-out;
     bottom: 0;
     width: 100%;
     z-index: 2;
-    padding: 2em;
-    background: red;
+    padding: 0 2em 2em 2em;
+    background: #ffffff;
+    right: 0;
+    overflow: auto;
+    border-radius: 25px 25px 0 0;
+    box-shadow: 0px 0px 10px rgba(0,0,0,.3);
+    max-width:320px;
+
+    @media screen and (min-width: 577px){
+        top:0;
+        right: ${props => props.isNominatedPageOpen === true ? '0px' : '-100vh'};
+        transition: right .2s ease-in-out;
+        border-radius: 0;
+    }
+
+    .movies_container{
+        margin: 2em auto;
+    max-width: 700px;
+    }
 
     .header {
       position:relative;
@@ -77,13 +100,27 @@ export const StyledNominationContainer = styled.section`
     place-content: center;
     height: 50px
     }
+
+    .header p {
+        font-size: 16px;
+        font-weight:600
+    }
 `;
 
 export const BackIcon = styled(Back)`
     position: absolute;
     z-index: 3;
-    left: 0px;
+    left: -15px;
     top: 16px;
     width: 20px;
     height: 20px;
+    fill:#b9b9b9;
+    transform: translateY(0px) scale(1);
+        transition: transform .2s ease-in;
+        cursor:pointer;
+
+        :active {
+            transform: translateY(3px) scale(0.8);
+            transition: transform .2s ease-in
+        }
 `

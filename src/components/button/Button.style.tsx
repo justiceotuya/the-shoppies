@@ -8,7 +8,8 @@ border-radius: 5px;
 color: #fff;
 transform:translateY(0);
 transition: transform .2s ease-out;
-font-size: 10px;
+font-size: 12px;
+text-transform: capitalize;
 padding: 8px 17px;
 line-height: 6px;
 

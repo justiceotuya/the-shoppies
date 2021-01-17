@@ -4,10 +4,12 @@
     Type: string
     Year: string
     imdbID: string
+    nominated:boolean
 }
 
 export interface IMovieContainerProps {
-    movies: [IMoviesObjs][]
+    movies: [IMoviesObjs][],
+    handleClickCardButton: () => void
 }
 
 export interface IHomeProps {
