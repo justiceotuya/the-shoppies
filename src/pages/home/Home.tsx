@@ -115,7 +115,7 @@ export const Home = () => {
                 //add nominated flag to the data
                 // handleAddNominatedFlag()
                 let resultWithNominatedFlag = response.Search.map((data: any) => {
-                    nominatedList.forEach((test: any) => {
+                    nominatedList && nominatedList.forEach((test: any) => {
                         if (test.imdbID === data.imdbID) {
                             data = { ...data, nominated: true }
                             return data

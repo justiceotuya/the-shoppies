@@ -20,7 +20,7 @@ export const NominationList = ({isNominatedPageOpen,handleToggleNominatedPage, n
         </header>
         <div>
             {
-                nominatedList.length === 0 ?
+                (!nominatedList )|| (nominatedList && nominatedList.length === 0) ?
                     <EmptyContainerComponent
                         description="Select Your Favourite Movies to Nominate Them"
                     />
